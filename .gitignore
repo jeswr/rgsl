@@ -102,3 +102,21 @@ dist
 
 # TernJS port file
 .tern-port
+
+# ANTLR generated sources
+/generated/
+lib/generated/
+**/*.interp
+**/*.tokens
+.antlr/
+
+# Local Java build artifacts (if any)
+*.class
+
+# IDE/editor
+.idea/
+.vscode/
+
+# Temporary
+/tmp/
+*.tmp

@@ -1,0 +1,32 @@
+@prefix rgso: <http://example.org/rgso#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+
+rgso: a owl:Ontology ;
+  dct:title "RDF Grammar Semantics Ontology" ;
+  dct:description "Vocabulary for associating concrete grammar production alternatives with RDF emission semantics." ;
+  vann:preferredNamespacePrefix "rgso" ;
+  vann:preferredNamespaceUri "http://example.org/rgso#" .
+
+rgso:Alternative a rdfs:Class ; rdfs:label "Grammar Alternative" .
+rgso:Binding a rdfs:Class ; rdfs:label "Variable Binding" .
+rgso:TermTemplate a rdfs:Class ; rdfs:label "Term Template" .
+rgso:Emit a rdfs:Class ; rdfs:label "Emission Template" .
+
+rgso:altName a rdf:Property ; rdfs:domain rgso:Alternative ; rdfs:range rdfs:Literal .
+rgso:binding a rdf:Property ; rdfs:domain rgso:Alternative ; rdfs:range rgso:Binding .
+rgso:emit a rdf:Property ; rdfs:domain rgso:Alternative ; rdfs:range rgso:Emit .
+rgso:subject a rdf:Property ; rdfs:domain rgso:Emit ; rdfs:range rgso:TermTemplate .
+rgso:predicate a rdf:Property ; rdfs:domain rgso:Emit ; rdfs:range rgso:TermTemplate .
+rgso:object a rdf:Property ; rdfs:domain rgso:Emit ; rdfs:range rgso:TermTemplate .
+rgso:graph a rdf:Property ; rdfs:domain rgso:Emit ; rdfs:range rgso:TermTemplate .
+rgso:path a rdf:Property ; rdfs:domain rgso:Binding ; rdfs:range rdfs:Literal .
+rgso:var a rdf:Property ; rdfs:domain rgso:Binding ; rdfs:range rdfs:Literal .
+rgso:kind a rdf:Property ; rdfs:domain rgso:TermTemplate ; rdfs:range rdfs:Literal .
+rgso:value a rdf:Property ; rdfs:domain rgso:TermTemplate ; rdfs:range rdfs:Literal .
+rgso:fromVar a rdf:Property ; rdfs:domain rgso:TermTemplate ; rdfs:range rdfs:Literal .
+rgso:lang a rdf:Property ; rdfs:domain rgso:TermTemplate ; rdfs:range rdfs:Literal .
+rgso:datatype a rdf:Property ; rdfs:domain rgso:TermTemplate ; rdfs:range rdfs:Literal .

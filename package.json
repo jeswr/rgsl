@@ -17,7 +17,8 @@
     "lint": "eslint lib/* __tests__/* --ext .ts",
     "lint:fix": "eslint lib/* __tests__/* --ext .ts --fix",
     "build": "tsc",
-    "prepare": "tsc",
+    "gen:grammars": "(cd lib/v4meta && npx antlr4ts -visitor -o ../../generated/v4meta ANTLRv4Lexer.g4 ANTLRv4Parser.g4) && (cd lib/rgsl && npx antlr4ts -visitor -o ../../generated/rgsl RGSL.g4)",
+    "prepare": "npm run gen:grammars && tsc",
     "semantic-release": "semantic-release"
   },
   "repository": {
@@ -31,10 +32,13 @@
     "url": "https://github.com/jeswr/rgsl/issues"
   },
   "homepage": "https://github.com/jeswr/rgsl/README.md",
+  "dependencies": {
+    "n3": "^1.17.0"
+  },
   "devDependencies": {
     "@types/jest": "^29.5.14",
     "@typescript-eslint/eslint-plugin": "^8.39.0",
-    "@typescript-eslint/parser": "^7.18.0",
+    "@typescript-eslint/parser": "^8.39.0",
     "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.32.0",
@@ -42,7 +46,10 @@
     "pre-commit": "^1.2.2",
     "semantic-release": "^24.2.7",
     "ts-jest": "^29.4.1",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "antlr4ts": "^0.5.0-alpha.4",
+    "antlr4ts-cli": "^0.5.0-alpha.4",
+    "@types/n3": "^1.16.5"
   },
   "jest": {
     "preset": "ts-jest",
