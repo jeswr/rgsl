@@ -12,8 +12,11 @@ ruleAltList: labeledAlt (OR labeledAlt)* ;
 
 labeledAlt: alternative (POUND identifier)? ;
 
-alternative: element+ ;
+alternative: element* ; // allow empty (for epsilon alts)
 
 identifier: ID ;
 
-element: ID | LPAREN alternative RPAREN ;
+// Elements can have EBNF suffixes.
+ element: atom ebnfSuffix? ;
+ atom: ID | LPAREN alternative (OR alternative)* RPAREN ;
+ ebnfSuffix: QUESTION QUESTION? | STAR QUESTION? | PLUS QUESTION? ;

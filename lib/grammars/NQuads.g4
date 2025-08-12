@@ -1,3 +1,4 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
 grammar NQuads;
 
 // Minimal abstracted N-Quads grammar adapted to current simplified ANTLR v4 meta-grammar subset.

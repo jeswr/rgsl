@@ -62,7 +62,17 @@ class AltCollector implements ANTLRv4ParserListener {
 }
 
 function parseG4Meta(src: string) {
-  const input = CharStreams.fromString(src);
+  // Pre-strip lexer rules (uppercase-leading identifiers) so our reduced meta-grammar can parse complex grammars like Turtle.
+  const lines = src.split(/\n/);
+  let cutIndex = lines.length;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (/^[A-Z][A-Z0-9_]*\s*:/.test(line)) { // first token (lexer) rule encountered
+      cutIndex = i; break;
+    }
+  }
+  const parserSection = lines.slice(0, cutIndex).join('\n');
+  const input = CharStreams.fromString(parserSection);
   const lexer = new ANTLRv4Lexer(input);
   const tokens = new CommonTokenStream(lexer);
   const parser = new ANTLRv4Parser(tokens);

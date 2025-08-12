@@ -1,141 +1,149 @@
-/*
- [The "BSD licence"]
- Copyright (c) 2014, Alejandro Medrano (@ Universidad Politecnica de Madrid, http://www.upm.es/)
- All rights reserved.
-
- Redistribution and use in source and binary forms, with or without
- modification, are permitted provided that the following conditions
- are met:
- 1. Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
- 2. Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
- 3. The name of the author may not be used to endorse or promote products
-    derived from this software without specific prior written permission.
-
- THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-*/
-/* Derived from http://www.w3.org/TR/turtle/#sec-grammar-grammar */
-
-// $antlr-format alignTrailingComments true, columnLimit 150, minEmptyLines 1, maxEmptyLinesToKeep 1, reflowComments false, useTab false
-// $antlr-format allowShortRulesOnASingleLine false, allowShortBlocksOnASingleLine true, alignSemicolons hanging, alignColons hanging
-
 grammar TURTLE;
 
+// Added RGSL semantic annotations after labeled alternatives.
+
 turtleDoc
-    : statement* EOF
+    : statement* EOF #TurtleDoc
     ;
 
 statement
-    : directive
-    | triples '.'
+    : directive #DirectiveStmt
+    | triples '.' #TriplesStmt
     ;
 
+// @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+// @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+// @prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+// @prefix ex: <http://example.com/>
+// (Directive statements themselves don't emit triples.)
+
 directive
-    : prefixID
-    | base
-    | sparqlPrefix
-    | sparqlBase
+    : prefixID #PrefixDir
+    | base #BaseDir
+    | sparqlPrefix #SparqlPrefixDir
+    | sparqlBase #SparqlBaseDir
     ;
 
 prefixID
-    : '@prefix' PNAME_NS IRIREF '.'
+    : '@prefix' PNAME_NS IRIREF '.' #PrefixId
     ;
 
 base
-    : '@base' IRIREF '.'
+    : '@base' IRIREF '.' #BaseId
     ;
 
 sparqlBase
-    : 'BASE' IRIREF
+    : 'BASE' IRIREF #SparqlBase
     ;
 
 sparqlPrefix
-    : 'PREFIX' PNAME_NS IRIREF
+    : 'PREFIX' PNAME_NS IRIREF #SparqlPrefix
     ;
 
 triples
-    : subject predicateObjectList
-    | blankNodePropertyList predicateObjectList?
+    : subject predicateObjectList #TriplesSPO
+      // @bind S <- subject
+      // @bind PO <- predicateObjectList | expandPO
+      // @emit iri:rdf:subject iri:rdf:predicate iri:rdf:object
+    | blankNodePropertyList predicateObjectList? #TriplesBN
+      // @bind BN <- blankNodePropertyList
+      // @bind PO <- predicateObjectList | expandPO
+      // @term BNTERM = bnode:BN
+      // @emit BNTERM iri:rdf:predicate iri:rdf:object
     ;
 
 predicateObjectList
-    : verb objectList (';' (verb objectList)?)*
+    : verb objectList (';' (verb objectList)?)* #PredicateObjectList
     ;
 
 objectList
-    : object_ (',' object_)*
+    : object_ (',' object_)* #ObjectList
     ;
 
 verb
-    : predicate
-    | 'a'
+    : predicate #VerbPred
+    | 'a' #VerbA
+      // @term A = iri:rdf:type
     ;
 
 subject
-    : iri
-    | BlankNode
-    | collection
+    : iri #SubjectIri
+      // @bind SI <- iri
+    | BlankNode #SubjectBNode
+      // @bind SB <- BlankNode
+      // @term SBTERM = bnode:SB
+    | collection #SubjectCollection
+      // @bind SC <- collection
     ;
 
 predicate
-    : iri
+    : iri #PredicateIri
+      // @bind P <- iri
     ;
 
 object_
-    : iri
-    | BlankNode
-    | collection
-    | blankNodePropertyList
-    | literal
+    : iri #ObjectIri
+      // @bind OI <- iri
+    | BlankNode #ObjectBNode
+      // @bind OB <- BlankNode
+      // @term OBTERM = bnode:OB
+    | collection #ObjectCollection
+      // @bind OC <- collection
+    | blankNodePropertyList #ObjectBNPL
+      // @bind OBP <- blankNodePropertyList
+    | literal #ObjectLiteral
+      // @bind OL <- literal
     ;
 
 literal
-    : rdfLiteral
-    | NumericLiteral
-    | BooleanLiteral
+    : rdfLiteral #LiteralRdf
+      // @bind L <- rdfLiteral
+    | NumericLiteral #LiteralNumeric
+      // @bind LN <- NumericLiteral
+    | BooleanLiteral #LiteralBoolean
+      // @bind LB <- BooleanLiteral
     ;
 
 blankNodePropertyList
-    : '[' predicateObjectList ']'
+    : '[' predicateObjectList ']' #BlankNodePropertyList
+      // @bind BPO <- predicateObjectList
     ;
 
 collection
-    : '(' object_* ')'
+    : '(' object_* ')' #Collection
+      // @bind COBJ <- object_
     ;
 
 NumericLiteral
-    : INTEGER
-    | DECIMAL
-    | DOUBLE
+    : INTEGER #NumericInteger
+    | DECIMAL #NumericDecimal
+    | DOUBLE #NumericDouble
     ;
 
 rdfLiteral
-    : String (LANGTAG | '^^' iri)?
+    : String (LANGTAG | '^^' iri)? #RdfLiteral
     ;
 
 BooleanLiteral
-    : 'true'
-    | 'false'
+    : 'true' #BoolTrue
+    | 'false' #BoolFalse
     ;
 
 String
-    : STRING_LITERAL_QUOTE
-    | STRING_LITERAL_SINGLE_QUOTE
-    | STRING_LITERAL_LONG_SINGLE_QUOTE
-    | STRING_LITERAL_LONG_QUOTE
+    : STRING_LITERAL_QUOTE #StrDQuote
+    | STRING_LITERAL_SINGLE_QUOTE #StrSQuote
+    | STRING_LITERAL_LONG_SINGLE_QUOTE #StrLongS
+    | STRING_LITERAL_LONG_QUOTE #StrLongD
     ;
 
 iri
-    : IRIREF
-    | PrefixedName
+    : IRIREF #IriRef
+    | PrefixedName #IriPrefixed
     ;
 
 BlankNode
-    : BLANK_NODE_LABEL
-    | ANON
+    : BLANK_NODE_LABEL #BlankNodeLabel
+    | ANON #BlankAnon
     ;
 
 WS
