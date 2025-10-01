@@ -46,7 +46,7 @@
     "pre-commit": "^1.2.2",
     "semantic-release": "^24.2.9",
     "ts-jest": "^29.4.3",
-    "typescript": "^5.9.2",
+    "typescript": "^5.9.3",
     "antlr4ts": "^0.5.0-alpha.4",
     "antlr4ts-cli": "^0.5.0-alpha.4",
     "@types/n3": "^1.16.5"
