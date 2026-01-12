@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/jeswr/rgsl/README.md",
   "dependencies": {
-    "n3": "^2.0.0"
+    "n3": "^2.0.1"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
